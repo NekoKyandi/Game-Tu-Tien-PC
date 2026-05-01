@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Đạo Tôn - Text Base RPG (Chiến Đấu Chân Thực)</title>
+    <style>
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <!-- Cột 1: Thuộc tính & Trang bị -->
+    <div class="panel">
+        <h2>Bản Tôn</h2>
+        <div class="stat-row"><span>Chiến Lực:</span> <span id="chien-luc" class="cp-text">0</span></div>
+        <div class="stat-row"><span>Cảnh Giới:</span> <span id="canh-gioi" class="realm-text">Phàm Nhân</span></div>
+        <div class="stat-row"><span>Tông Môn:</span> <span id="tong-mon" style="color:#93c5fd">Tán Tu</span></div>
+        
+        <div style="margin-top: 10px; font-size: 12px;">Tu Vi (Đột Phá: <span id="ty-le-dot-pha" style="color:#4ade80">100%</span>):</div>
+        <div class="progress-bg"><div id="bar-exp" class="progress-fill fill-exp"></div><div id="text-exp" class="progress-text">0 / 100</div></div>
+        
+        <div style="font-size: 12px;">Khí Huyết:</div>
+        <div class="progress-bg"><div id="bar-hp" class="progress-fill fill-hp"></div><div id="text-hp" class="progress-text">100 / 100</div></div>
+        
+        <div style="font-size: 12px;">Linh Lực:</div>
+        <div class="progress-bg"><div id="bar-mp" class="progress-fill fill-mp"></div><div id="text-mp" class="progress-text">50 / 50</div></div>
+        
+        <div class="stat-row"><span>Tấn Công (ATK):</span> <span id="tan-cong" class="stat-value">10</span></div>
+        <div class="stat-row"><span>Hộ Thể (DEF):</span> <span id="phong-thu" class="stat-value">5</span></div>
+        <div class="stat-row" style="color:#fde047; font-weight: bold; font-size: 15px; margin-top: 5px;"><span>Linh Thạch:</span> <span><span id="linh-thach">0</span> 💎</span></div>
+        
+        <h3 style="margin-top: 15px;">Công Pháp & Luyện Thể</h3>
+        <select id="skill-selection" onchange="equipSkill()">
+            <option value="">[Chưa trang bị Công Pháp]</option>
+        </select>
+        <div class="box-item flex-between" style="border-color:#e11d48;">
+            <div>Nhục Thân: <b style="color:#e11d48">Lv.<span id="luyen-the-lv">0</span></b></div>
+            <button class="btn-upgrade" style="background:#7f1d1d;" onclick="upgradeLuyenThe()">Rèn Thể</button>
+        </div>
+
+        <h3 style="margin-top: 15px;">Pháp Bảo Bản Mệnh</h3>
+        <div id="trang-bi-list"></div>
+    </div>
+
+    <!-- Cột 2: Tương tác chính -->
+    <div class="panel">
+        <h3>Tu Tiên Lộ</h3>
+        
+        <div id="sect-selection" style="display:none; grid-template-columns: 1fr 1fr 1fr; grid-gap: 5px; margin-bottom: 10px;">
+            <button class="btn-upgrade" style="background:#1e3a8a; color:#93c5fd;" onclick="joinSect('Kiếm Tông')">Kiếm Tông</button>
+            <button class="btn-upgrade" style="background:#14532d; color:#86efac;" onclick="joinSect('Dược Cốc')">Dược Cốc</button>
+            <button class="btn-upgrade" style="background:#7f1d1d; color:#fca5a5;" onclick="joinSect('Ma Tông')">Ma Tông</button>
+        </div>
+
+        <select id="map-selection" onchange="changeMap()"></select>
+        <button class="btn-dungeon" onclick="diBiCanh()">Vào Bí Cảnh (Vé: <span id="so-ve-bicong">0</span>)</button>
+
+        <!-- KHUNG CHIẾN ĐẤU MỚI -->
+        <div id="enemy-panel">
+            <div id="enemy-name">Đang tìm mục tiêu...</div>
+            <div id="enemy-stats">ATK: 0 | DEF: 0</div>
+            <div class="progress-bg" style="height: 18px; margin-bottom: 0;">
+                <div id="bar-enemy-hp" class="progress-fill fill-enemy"></div>
+                <div id="text-enemy-hp" class="progress-text">0 / 0</div>
+            </div>
+        </div>
+
+        <div class="tab-container">
+            <button id="tab-all" class="tab-btn active" onclick="switchLogTab('all')">Tất Cả</button>
+            <button id="tab-sys" class="tab-btn" onclick="switchLogTab('system')">Hệ Thống</button>
+            <button id="tab-cmb" class="tab-btn" onclick="switchLogTab('combat')">Chiến Đấu</button>
+        </div>
+        <div id="log-box"></div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; grid-gap: 8px;">
+            <button onclick="lichLuyen()" style="border-color: #ef4444; color: #fca5a5; font-size: 14px; padding: 10px;">Tấn Công (1 Lượt)</button>
+            <button onclick="nghiNgoi()" style="font-size: 14px; padding: 10px;">Liệu Thương</button>
+            <button id="btn-dot-pha" onclick="dotPha()" disabled style="grid-column: span 2; background: #4a044e; color: #e879f9; border-color: #d946ef;">Đột Phá Cảnh Giới</button>
+            <button id="btn-auto-lich-luyen" onclick="toggleAuto()" style="grid-column: span 2; padding: 12px; font-size: 15px;">Treo Đánh Quái</button>
+        </div>
+    </div>
+
+    <!-- Cột 3: Kinh Tế & Túi Đồ -->
+    <div class="panel">
+        <h3>Bảng Cáo Thị (Nhiệm Vụ)</h3>
+        <div class="quest-box" id="quest-container">
+            <div id="quest-desc" style="font-size: 13px; margin-bottom: 5px; color: #e0e0e0;">Đang tìm nhiệm vụ...</div>
+            <div class="flex-between">
+                <span id="quest-reward" style="color:#fde047; font-size: 12px; font-weight:bold;">Thưởng: 0 💎</span>
+                <div>
+                    <button class="btn-upgrade" onclick="refreshQuest()">Đổi</button>
+                    <button class="btn-upgrade" style="background:#166534; color:#bbf7d0;" onclick="submitQuest()">Trả</button>
+                </div>
+            </div>
+        </div>
+
+        <button onclick="openShop()" style="background:#4a044e; color:#e879f9; border-color:#d946ef; font-size: 14px; margin-bottom: 15px; padding: 12px 0; text-transform: uppercase; letter-spacing: 1px;">Mở Thương Các</button>
+
+        <h3 style="margin-top: 5px;">Túi Trữ Vật</h3>
+        <div class="stat-row" style="color:#4ade80; font-size: 12px;"><span>Buff Tụ Khí:</span> <span id="buff-tu-khi">0 lượt</span></div>
+        <div class="stat-row" style="color:#c084fc; font-size: 12px;"><span>Thế Mạng Phù:</span> <span id="so-bua-chu">0</span></div>
+        <div id="inventory-list" style="flex-grow: 1; overflow-y: auto;"></div>
+        
+        <div style="display:flex; gap:10px; margin-top:15px;">
+            <button onclick="saveGame(true)">Lưu Game</button>
+            <button onclick="resetGame()" style="color:#ef4444; border-color:#ef4444;">Đầu Thai</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Thương Các -->
+<div id="shop-modal" class="modal" onclick="closeShopOutside(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <span class="close-btn" onclick="closeShop()">&times;</span>
+        <h2 style="margin-top: 0; padding-bottom: 10px;">Thương Các & Luyện Đan</h2>
+        <div style="text-align: center; color: #fde047; margin-bottom: 15px; font-weight: bold; font-size: 16px;">Linh Thạch: <span id="modal-linh-thach">0</span> 💎</div>
+        
+        <div class="box-item flex-between">
+            <span title="Hồi 40% HP">Hồi Huyết Đan (2 Dược)</span>
+            <button class="btn-upgrade" onclick="craftItem('Hồi Huyết Đan')">Luyện</button>
+        </div>
+        <div class="box-item flex-between">
+            <span title="+10% Tỷ lệ">Phá Cảnh Đan (5 Dược+2 Khoáng)</span>
+            <button class="btn-upgrade" onclick="craftItem('Phá Cảnh Đan')">Luyện</button>
+        </div>
+        <div class="box-item flex-between">
+            <span>Mua Vé Bí Cảnh (500💎)</span>
+            <button class="btn-upgrade" onclick="buyShop('Vé Bí Cảnh', 500)">Mua</button>
+        </div>
+        <div class="box-item flex-between">
+            <span>Mua Thế Mạng Phù (1000💎)</span>
+            <button class="btn-upgrade" onclick="buyShop('Thế Mạng Phù', 1000)">Mua</button>
+        </div>
+        <div class="box-item flex-between">
+            <span>Mua Tụ Khí Trận (500💎)</span>
+            <button class="btn-upgrade" onclick="buyShop('Tụ Khí Trận', 500)">Mua</button>
+        </div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+<div id="version-display"></div>
+</body>
+</html>

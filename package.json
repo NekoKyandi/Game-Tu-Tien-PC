@@ -1,0 +1,46 @@
+{
+  "name": "daoton",
+  "version": "1.0.5",
+  "description": "Game Tu Tien",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder"
+  },
+  "keywords": [],
+  "author": "Nguyễn Ngọc Ly",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "electron": "^41.3.0",
+    "electron-builder": "^26.8.1"
+  },
+  "build": {
+    "appId": "com.nguyenngocly.daoton",
+    "productName": "Dao Ton",
+    "win": {
+      "target": "nsis",
+      "icon": "icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Đạo Tôn",
+      "installerIcon": "icon.ico",
+      "uninstallerIcon": "icon.ico",
+      "uninstallDisplayName": "Đạo Tôn"
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "NekoKyandi",
+        "repo": "Game-Tu-Tien"
+      }
+    ]
+  },
+  "dependencies": {
+    "electron-updater": "^6.8.3"
+  }
+}
