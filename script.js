@@ -16,9 +16,12 @@ try {
 
 // ----- CƠ SỞ DỮ LIỆU GAME -----
 const dsCanhGioi = [
-    { name: "Phàm Nhân", maxLevel: 1, rate: 100 }, { name: "Luyện Khí Kỳ", maxLevel: 9, rate: 80 },
-    { name: "Trúc Cơ Kỳ", maxLevel: 9, rate: 50 }, { name: "Kim Đan Kỳ", maxLevel: 9, rate: 30 },
-    { name: "Nguyên Anh Kỳ", maxLevel: 9, rate: 10 }, { name: "Hóa Thần Kỳ", maxLevel: 9, rate: 5 }
+    { name: "Phàm Nhân", maxLevel: 1, rate: 100 },
+    { name: "Luyện Khí Kỳ", maxLevel: 9, rate: 50 },
+    { name: "Trúc Cơ Kỳ", maxLevel: 9, rate: 50 },
+    { name: "Kim Đan Kỳ", maxLevel: 9, rate: 30 },
+    { name: "Nguyên Anh Kỳ", maxLevel: 9, rate: 10 },
+    { name: "Hóa Thần Kỳ", maxLevel: 9, rate: 5 }
 ];
 
 const trangBiType = ["Phàm", "Linh", "Pháp", "Tiên"];
@@ -33,9 +36,9 @@ const dsBanDo = [
 ];
 
 const dbCongPhap = {
-    "Cửu Hà Kiếm Quyết": { mult: 3, mpCost: 30 },
-    "Thiên Lôi Dẫn": { mult: 4, mpCost: 50 },
-    "Phá Thiên Nhất Kích": { mult: 6, mpCost: 100 }
+    "Cửu Hà Kiếm Quyết": { mult: 2, mpCost: 30 },
+    "Thiên Lôi Dẫn": { mult: 3, mpCost: 50 },
+    "Phá Thiên Nhất Kích": { mult: 5, mpCost: 100 }
 };
 
 const itemPrices = { "Hồi Huyết Đan": 20, "Phá Cảnh Đan": 100, "Thảo Dược": 5, "Khoáng Thạch": 8, "Tài Liệu Yêu Thú": 15, "Thiên Đạo Kết Tinh": 1000 };
@@ -57,7 +60,9 @@ let defaultPlayer = {
 };
 
 let player = JSON.parse(JSON.stringify(defaultPlayer));
-let autoInterval = null; let currentAutoMode = null; let passiveCultivationInterval = null;
+let autoInterval = null;
+let currentAutoMode = null;
+let passiveCultivationInterval = null;
 let currentLogTab = 'all';
 
 // TRẠNG THÁI CHIẾN ĐẤU (Không lưu vào save)
@@ -148,7 +153,7 @@ function updateUI() {
     document.getElementById('so-ve-bicong').innerText = player.veBiCanh;
 
     let isMajorBreak = (player.tieuCanhGioi === major.maxLevel);
-    document.getElementById('ty-le-dot-pha').innerText = (player.canhGioiIndex >= dsCanhGioi.length-1 && isMajorBreak) ? "MAX" : `${isMajorBreak ? major.rate : 90}% (+${player.buffDotPha}%)`;
+    document.getElementById('ty-le-dot-pha').innerText = (player.canhGioiIndex >= dsCanhGioi.length-1 && isMajorBreak) ? "MAX" : `${isMajorBreak ? major.rate : 70}% (+${player.buffDotPha}%)`;
     document.getElementById('so-bua-chu').innerText = player.buaChu;
     document.getElementById('buff-tu-khi').innerText = player.buffTuKhi + " lượt";
     document.getElementById('tong-mon').innerText = player.tongMon || "Tán Tu";
@@ -165,8 +170,14 @@ function updateUI() {
 
 function updateEnemyUI() {
     let panel = document.getElementById('enemy-panel');
+    panel.style.display = 'block';
     if(!activeEnemy) {
-        panel.style.display = 'none';
+        document.getElementById('enemy-name').innerText = "ĐANG TÌM MỤC TIÊU...";
+        document.getElementById('enemy-name').style.color = "#fca5a5"; // Màu
+        document.getElementById('enemy-stats').innerText = `ATK: 0 | DEF: 0`;
+        
+        // Cập nhật thanh máu về 0/0
+        updateBar('bar-enemy-hp', 'text-enemy-hp', 0, 0);
     } else {
         panel.style.display = 'block';
         document.getElementById('enemy-name').innerText = activeEnemy.name + (activeEnemy.isBoss ? " [BOSS]" : "");
@@ -486,7 +497,7 @@ function nghiNgoi() {
 function dotPha() {
     let major = dsCanhGioi[player.canhGioiIndex];
     let isMajorBreak = (player.tieuCanhGioi === major.maxLevel);
-    let tl = isMajorBreak ? major.rate : 90; tl += player.buffDotPha; player.buffDotPha = 0; 
+    let tl = isMajorBreak ? major.rate : 50; tl += player.buffDotPha; player.buffDotPha = 0; 
     
     if (Math.random() * 100 <= tl) {
         if(isMajorBreak) {

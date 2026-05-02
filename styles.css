@@ -63,6 +63,6 @@ select { width: 100%; padding: 8px; background: #111; color: #c09d53; border: 1p
 .close-btn { color: #c09d53; position: absolute; right: 15px; top: 10px; font-size: 28px; font-weight: bold; cursor: pointer; }
 
 /* Khung hiển thị Quái Vật */
-#enemy-panel { display: none; background: rgba(159, 18, 57, 0.1); border: 1px solid #9f1239; padding: 10px; margin-bottom: 10px; border-radius: 3px; text-align: center; }
+#enemy-panel { display: block; background: rgba(159, 18, 57, 0.1); border: 1px solid #9f1239; padding: 10px; margin-bottom: 10px; border-radius: 3px; text-align: center; }
 #enemy-name { color: #fca5a5; font-weight: bold; font-size: 15px; margin-bottom: 5px; text-transform: uppercase;}
 #enemy-stats { font-size: 11px; color: #aaa; margin-bottom: 5px; }
