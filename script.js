@@ -283,10 +283,29 @@ function useItem(itemName) {
     if (player.inventory[itemName] > 0) {
         player.inventory[itemName]--;
         if (itemName === "Hồi Huyết Đan") {
-            let heal = Math.floor(getTongMaxHP() * 0.4); player.khiHuyet += heal;
+            let heal = Math.floor(getTongMaxHP() * 0.4);
+            player.khiHuyet = Math.min(getTongMaxHP(), player.khiHuyet + heal); // Không vượt quá Max HP
             addLog(`Nuốt Hồi Huyết Đan, khôi phục ${heal} HP.`, "system", "log-gain");
-        } else if (itemName === "Phá Cảnh Đan") { player.buffDotPha += 10; addLog("Tỷ lệ đột phá +10%.", "system", "log-gain"); } 
-        else if (itemName === "Túi Trữ Vật") {
+        } 
+        else if (itemName === "Phá Cảnh Đan") {
+            // Tính toán lại tỷ lệ hiện tại ngay lúc này
+            let major = dsCanhGioi[player.canhGioiIndex];
+            let isMajorBreak = (player.tieuCanhGioi === major.maxLevel);
+            let tiLeHienTai = (isMajorBreak ? major.rate : 90) + player.buffDotPha;
+
+            if (tiLeHienTai < 100) {
+                player.buffDotPha += 1;
+                addLog("Tỷ lệ đột phá tăng thêm 1%.", "system", "log-gain");
+            } else {
+                addLog("Tỷ lệ đột phá đã đạt cực hạn (100%), không cần dùng thêm!", "system", "log-warning");
+                // Hoàn trả lại đan dược nếu đã 100%
+                player.inventory[itemName]++; 
+            }
+            updateUI(); // Gọi hàm cập nhật chung
+            renderInventory();
+            saveGame();
+        }
+        if (itemName === "Túi Trữ Vật") {
             let lt = Math.floor(Math.random() * 500) + 100 * (player.canhGioiIndex+1); player.linhThach += lt;
             let ore = Math.floor(Math.random() * 10) + 5;
             player.inventory["Khoáng Thạch"] = (player.inventory["Khoáng Thạch"]||0) + ore;
