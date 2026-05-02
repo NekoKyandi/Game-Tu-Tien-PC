@@ -305,12 +305,13 @@ function useItem(itemName) {
             renderInventory();
             saveGame();
         }
-        if (itemName === "Túi Trữ Vật") {
+        else if (itemName === "Túi Trữ Vật") {
             let lt = Math.floor(Math.random() * 500) + 100 * (player.canhGioiIndex+1); player.linhThach += lt;
             let ore = Math.floor(Math.random() * 10) + 5;
             player.inventory["Khoáng Thạch"] = (player.inventory["Khoáng Thạch"]||0) + ore;
             addLog(`Mở Túi Trữ Vật cướp được, nhận ${lt} 💎 và ${ore} Khoáng Thạch!`, "system", "log-kyngo");
-        } else if (itemName.startsWith("Bí Kíp - ")) {
+        }
+        else if (itemName.startsWith("Bí Kíp - ")) {
             let skillName = itemName.replace("Bí Kíp - ", "");
             if(!player.congPhapHocDuoc.includes(skillName)) {
                 player.congPhapHocDuoc.push(skillName); addLog(`Tuyệt học! Lĩnh ngộ [${skillName}].`, "system", "log-kyngo");
